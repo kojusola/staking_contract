@@ -10,8 +10,8 @@ const BoredApeTokenAddress = "0x0ed64d01D0B4B655E410EF1441dD677B695639E7";
 
 async function main() {
   const stakingContract = await hre.ethers.getContractFactory("StakeContract");
-  const staking = await stakingContract.deploy();
-  await staking.deployed(BoredApeTokenAddress);
+  const staking = await stakingContract.deploy(BoredApeTokenAddress);
+  await staking.deployed();
   console.log("Contract Address", staking.address);
 }
 
