@@ -49,7 +49,8 @@ contract StakeContract {
              token.transfer(msg.sender, user.amountDue);
              emit withdrawal  (msg.sender, user.amountDue);
         }else {
-            emit withdrawal  (msg.sender, user.amountDue);
+            token.transfer(msg.sender, user.amount);
+            emit withdrawal  (msg.sender, user.amount);
         }
         return true;
     }
