@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract StakeContract {
     IERC721 public _BoredApeNFT;
+    IERC20 public _token;
   struct  stakers {
         uint amount;
         uint timeStaked;
@@ -18,17 +19,18 @@ contract StakeContract {
 
     mapping(address => stakers) records;
 
-    constructor(){
+    constructor(address token){
+        _token = IERC20(token);
         _BoredApeNFT = IERC721(0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D);
     }
 
-    function Stake (uint _amount, uint _timeStaked, IERC20 token  ) public returns (bool) {
+    function Stake (uint _amount, uint _timeStaked ) public returns (bool) {
          require(_amount > 0, "You need to stake at least some tokens");
-        uint256 tokenBalance = token.balanceOf(msg.sender);
+        uint256 tokenBalance = _token.balanceOf(msg.sender);
         require(tokenBalance>= _amount, "You do not have enough tokens");
           uint256 NFTBalance = _BoredApeNFT.balanceOf(msg.sender);
         require(NFTBalance > 0, "You can only stake if you are an owner of a Bored Ape NFT" );
-        bool transferred = token.transferFrom(msg.sender, address(this), _amount);
+        bool transferred = _token.transferFrom(msg.sender, address(this), _amount);
         require(transferred, "Token Transfer Failed");
         stakers memory user;
         user.amount = _amount;
@@ -41,14 +43,14 @@ contract StakeContract {
     }
 
 
-      function WithDrawStake ( uint _presentTime, IERC20 token ) public returns (bool) {
+      function WithDrawStake ( uint _presentTime ) public returns (bool) {
         require (records[msg.sender].amount > 0, " You need to stake to withdraw");
         stakers memory user= records[msg.sender];
         if(_presentTime >= user.timeDue){
-             token.transfer(msg.sender, user.amountDue);
+             _token.transfer(msg.sender, user.amountDue);
              emit withdrawal  (msg.sender, user.amountDue);
         }else {
-            token.transfer(msg.sender, user.amount);
+            _token.transfer(msg.sender, user.amount);
             emit withdrawal  (msg.sender, user.amount);
         }
         return true;

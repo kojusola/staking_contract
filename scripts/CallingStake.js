@@ -7,19 +7,23 @@ const hre = require("hardhat");
 const { ethers } = require("hardhat");
 const BoredApeNFTHolder = "0x4548d498460599286ce29baf9e6b775c19385227";
 const BoredApeTokenAddress = "0x0ed64d01D0B4B655E410EF1441dD677B695639E7";
-const StakeAddress = " 0x96F3Ce39Ad2BfDCf92C0F6E2C2CAbF83874660Fc";
+const StakeAddress = " 0x40a42Baf86Fc821f972Ad2aC878729063CeEF403";
 
 async function main() {
   await hre.network.provider.request({
     method: "hardhat_impersonateAccount",
     params: [BoredApeNFTHolder],
   });
-  const BoredAppSigner = await ethers.getSigners(BoredApeNFTHolder);
-  const stakingContract = await hre.ethers.getContractAt(
+  const BoredAppSigner = await await ethers.provider.getSigner(
+    BoredApeNFTHolder
+  );
+  //   console.log(BoredAppSigner);
+  const stakingContract = await ethers.getContractAt(
     "StakeContract",
     StakeAddress,
     BoredAppSigner
   );
+  console.log(stakingContract.address);
   const BoredApeContract = await ethers.getContractAt(
     "IERC721",
     "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D"
@@ -35,18 +39,14 @@ async function main() {
   console.log(await BoredApeContract.balanceOf(BoredApeNFTHolder));
   const present = Math.floor(new Date().getTime() / 1000);
   console.log(present);
-  const results = await stakingContract.Stake(
-    ethers.utils.parseUnits("1", 18),
-    present,
-    BoredApeTokenAddress
-  );
+  console.log(ethers.utils.parseUnits("1", 18));
+  console.log(BoredApeTokenAddress);
+  const results = await stakingContract.Stake(1000000000000000000, present);
+  console.log(results);
   const events = await results.wait();
   console.log(events);
-  const resultsWithdraw = await stakingContract.WithDrawStake(
-    present,
-    BoredApeTokenAddress
-  );
-  const eventsWithdraw = await results.wait();
+  const resultsWithdraw = await stakingContract.WithDrawStake(present);
+  const eventsWithdraw = await resultsWithdraw.wait();
   console.log(eventsWithdraw);
   console.log(await BoredApeTokenContract.balanceOf(BoredApeNFTHolder));
 }
