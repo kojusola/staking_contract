@@ -7,7 +7,7 @@ const hre = require("hardhat");
 const { ethers } = require("hardhat");
 const BoredApeNFTHolder = "0x4548d498460599286ce29baf9e6b775c19385227";
 const BoredApeTokenAddress = "0x0ed64d01D0B4B655E410EF1441dD677B695639E7";
-const StakeAddress = " 0x40a42Baf86Fc821f972Ad2aC878729063CeEF403";
+const StakeAddress = "0x40a42Baf86Fc821f972Ad2aC878729063CeEF403";
 
 async function main() {
   await hre.network.provider.request({
@@ -41,7 +41,10 @@ async function main() {
   console.log(present);
   console.log(ethers.utils.parseUnits("1", 18));
   console.log(BoredApeTokenAddress);
-  const results = await stakingContract.Stake(1000000000000000000, present);
+  const results = await stakingContract.Stake(
+    ethers.utils.parseUnits("1", 18),
+    present
+  );
   console.log(results);
   const events = await results.wait();
   console.log(events);
