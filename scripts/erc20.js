@@ -10,19 +10,19 @@ async function main() {
   const Erc = await erc20.deploy("boredApeToken", "BAT", 18, 100);
   await Erc.deployed();
   console.log("Contract Address", Erc.address);
-  console.log(
-    "Bored Ape Token Initial Balance",
-    await Erc.balanceOf(BoredApiNFTHolder)
-  );
-  balanceAddress = await Erc.transfer(
-    BoredApiNFTHolder,
-    ethers.utils.parseUnits("2", 18)
-  );
+  // console.log(
+  //   "Bored Ape Token Initial Balance",
+  //   await Erc.balanceOf(BoredApiNFTHolder)
+  // );
+  // balanceAddress = await Erc.transfer(
+  //   BoredApiNFTHolder,
+  //   ethers.utils.parseUnits("2", 18)
+  // );
   // console.log(balanceAddress);
-  console.log(
-    "Bored Ape Token After Balance",
-    await Erc.balanceOf(BoredApiNFTHolder)
-  );
+  // console.log(
+  //   "Bored Ape Token After Balance",
+  //   await Erc.balanceOf(BoredApiNFTHolder)
+  // );
   // balanceAddress = await Erc.getTotalSupplyAddress(100);
   // console.log(balanceAddress);
 }

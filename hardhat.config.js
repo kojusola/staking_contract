@@ -24,5 +24,9 @@ module.exports = {
         url: "https://speedy-nodes-nyc.moralis.io/294492a5fe6a64b272f91b7d/eth/mainnet",
       },
     },
+    // rinkeby: {
+    //   url: process.env.MORALIS_API_URL,
+    //   accounts: [process.env.PRIVATE_RINKEBY_ACCOUNT_KEY],
+    // },
   },
 };
