@@ -8,7 +8,8 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 contract StakingAutoBalancingContract {
     IERC721 public _BoredApeNFT;
     IERC20 public _token;
-    uint constant secPerDay = 86400;
+    // uint constant secPerDay = 86400;
+    uint constant secPerMonth = 2592000;
   struct  stakes {
         uint amount;
         uint timeStaked;
@@ -28,9 +29,9 @@ contract StakingAutoBalancingContract {
     function interestCalc(uint _amount,uint _timeStaked, uint _timeStakeLimit, uint _presentTime) public pure returns (uint){
         if(_presentTime > _timeStakeLimit){
             uint length = _presentTime - _timeStaked;
-            uint dayNumber = length/ secPerDay;
-            if(dayNumber > 3 ){
-               uint interest = (_amount * 1/10) * dayNumber;
+            uint monthNumber = length/ secPerMonth;
+            if(monthNumber > 1 ){
+               uint interest = (_amount * 1/10) * monthNumber;
                return interest;
             }else {
                uint interest = (_amount * 1/10) * 3;
@@ -101,7 +102,7 @@ contract StakingAutoBalancingContract {
         uint interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue,block.timestamp);
         _token.transfer(msg.sender, interest );
         user.timeStaked = block.timestamp;
-        user.minimumTimeDue = block.timestamp + 259200;
+        user.minimumTimeDue = block.timestamp + secPerMonth;
         emit withdrawal  (msg.sender, interest );
         return true;
     }
