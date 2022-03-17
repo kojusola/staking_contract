@@ -12,9 +12,7 @@ contract StakeContract {
   struct  stakes {
         uint amount;
         uint timeStaked;
-        uint amountDue;
         uint minimumTimeDue;
-        bool staked;
         bool withdrawn;
         bool withdrawnInterest;
     }
