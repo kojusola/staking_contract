@@ -14,8 +14,6 @@ contract StakingAutoBalancingContract {
         uint timeStaked;
         uint minimumTimeDue;
         bool staked;
-        bool withdrawn;
-        bool withdrawnInterest;
     }
     event stakesEvent (address staker, uint _amount, uint _timeStaked);
     event viewStakes(address staker, stakes);
