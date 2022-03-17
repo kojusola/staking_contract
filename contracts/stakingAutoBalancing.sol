@@ -51,7 +51,7 @@ contract StakingAutoBalancingContract {
         require(NFTBalance > 0, "You can only stake if you are an owner of a Bored Ape NFT" );
         bool transferred = _token.transferFrom(msg.sender, address(this), _amount);
         require(transferred, "Token Transfer Failed");
-        stakes memory user = records[msg.sender];
+        stakes storage user = records[msg.sender];
         if(records[msg.sender].staked){
             uint interest = interestCalc(user.amount, user.timeStaked, user.minimumTimeDue, block.timestamp);
             uint _totalDue = interest + _amount + records[msg.sender].amount;
@@ -71,7 +71,7 @@ contract StakingAutoBalancingContract {
 
       function WithDrawAll() public returns (bool) {
         require (records[msg.sender].amount > 0, "You need to stake to withdraw");
-        stakes memory user= records[msg.sender];
+        stakes storage user= records[msg.sender];
         uint interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue,block.timestamp);
         uint totalWithdrawal;
         totalWithdrawal = user.amount + interest;
@@ -83,7 +83,7 @@ contract StakingAutoBalancingContract {
 
      function WithAnAmount(uint _amount) public returns (bool) {
         require (records[msg.sender].amount > 0, "You need to stake to withdraw");
-        stakes memory user= records[msg.sender];
+        stakes storage user= records[msg.sender];
         uint interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue,block.timestamp);
         uint totalRemaining;
         totalRemaining = user.amount + interest;
@@ -98,7 +98,7 @@ contract StakingAutoBalancingContract {
 
       function WithdrawOnlyInterests () public returns (bool) {
         require (records[msg.sender].amount > 0, "You need to stake to withdraw");
-        stakes memory user= records[msg.sender];
+        stakes storage user= records[msg.sender];
         uint interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue,block.timestamp);
         _token.transfer(msg.sender, interest );
         user.timeStaked = block.timestamp;

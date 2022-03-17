@@ -63,7 +63,7 @@ contract StakeContract {
 
       function WithDrawAll ( uint _presentTime) public returns (bool) {
         require (records[msg.sender].length > 0, "You need to stake to withdraw");
-        stakes[] memory user= records[msg.sender];
+        stakes[] storage user= records[msg.sender];
         uint totalWithdrawal;
         for(uint i = 0; i< user.length; i++){
             if(!user[i].withdrawn){
@@ -79,7 +79,7 @@ contract StakeContract {
 
       function WithdrawOnlyInterests ( uint _presentTime) public returns (bool) {
         require (records[msg.sender].length > 0, "You need to stake to withdraw");
-        stakes[] memory user= records[msg.sender];
+        stakes[] storage user= records[msg.sender];
         uint totalWithdrawal;
         for(uint i = 0; i< user.length; i++){
             if(!user[i].withdrawn){
@@ -97,7 +97,7 @@ contract StakeContract {
     function WithdrawSingleStake( uint _presentTime, uint _stakeNumber) public returns (bool) {
         require (records[msg.sender].length > 0, "You need to stake to withdraw");
         require (records[msg.sender][_stakeNumber].amount > 0, "You do not have any stake with this number");
-        stakes memory user= records[msg.sender][_stakeNumber];
+        stakes storage user= records[msg.sender][_stakeNumber];
         uint interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue, _presentTime);
         uint totalWithdrawal;
         totalWithdrawal = user.amount + interest;
