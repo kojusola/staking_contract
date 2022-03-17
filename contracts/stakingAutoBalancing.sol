@@ -80,6 +80,21 @@ contract StakingAutoBalancingContract {
         return true;
     }
 
+     function WithAnAmount(uint _amount) public returns (bool) {
+        require (records[msg.sender].amount > 0, "You need to stake to withdraw");
+        stakes memory user= records[msg.sender];
+        uint interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue,block.timestamp);
+        uint totalRemaining;
+        totalRemaining = user.amount + interest;
+        require(totalRemaining > _amount, "You do not have enough Balance to widthdraw that amount");
+        user.amount = totalRemaining - _amount;
+        user.timeStaked = block.timestamp;
+        user.minimumTimeDue = block.timestamp + 259200;
+         _token.transfer(msg.sender, _amount);
+        emit withdrawal(msg.sender, _amount);
+        return true;
+    }
+
       function WithdrawOnlyInterests () public returns (bool) {
         require (records[msg.sender].amount > 0, "You need to stake to withdraw");
         stakes memory user= records[msg.sender];
