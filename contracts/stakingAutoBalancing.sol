@@ -9,7 +9,7 @@ contract StakingAutoBalancingContract {
     IERC721 public _BoredApeNFT;
     IERC20 public _token;
     // uint constant secPerDay = 86400;
-    uint constant secPerMonth = 2592000;
+    // uint constant secPerMonth = 2592000;
   struct  stakes {
         uint amount;
         uint timeStaked;
@@ -17,7 +17,7 @@ contract StakingAutoBalancingContract {
         bool staked;
     }
     event stakesEvent (address staker, uint _amount, uint _timeStaked);
-    event viewStakes(address staker, stakes);
+    event viewStakes(address staker, stakes user);
     event withdrawal (address staker, uint _amount);
 
     mapping(address => stakes) records;
@@ -29,12 +29,12 @@ contract StakingAutoBalancingContract {
     function interestCalc(uint _amount,uint _timeStaked, uint _timeStakeLimit, uint _presentTime) public pure returns (uint){
         if(_presentTime > _timeStakeLimit){
             uint length = _presentTime - _timeStaked;
-            uint monthNumber = length/ secPerMonth;
+            uint monthNumber = length/ 30 days;
             if(monthNumber > 1 ){
                uint interest = (_amount * 1/10) * monthNumber;
                return interest;
             }else {
-               uint interest = (_amount * 1/10) * 3;
+               uint interest = (_amount * 1/10);
                return interest;
             }
         }else{
@@ -46,8 +46,8 @@ contract StakingAutoBalancingContract {
     function Stake (uint _amount) public returns (bool) {
          require(_amount > 0, "You need to stake at least some tokens");
         uint256 tokenBalance = _token.balanceOf(msg.sender);
-        require(tokenBalance>= _amount, "You do not have enough tokens");
-          uint256 NFTBalance = _BoredApeNFT.balanceOf(msg.sender);
+        require(tokenBalance >= _amount, "You do not have enough tokens");
+        uint256 NFTBalance = _BoredApeNFT.balanceOf(msg.sender);
         require(NFTBalance > 0, "You can only stake if you are an owner of a Bored Ape NFT" );
         bool transferred = _token.transferFrom(msg.sender, address(this), _amount);
         require(transferred, "Token Transfer Failed");
@@ -57,11 +57,11 @@ contract StakingAutoBalancingContract {
             uint _totalDue = interest + _amount + records[msg.sender].amount;
             user.amount = _totalDue;
             user.timeStaked = block.timestamp;
-            user.minimumTimeDue = block.timestamp + 259200;
+            user.minimumTimeDue = block.timestamp + 30 days;
         } else{
             user.amount = _amount;
             user.timeStaked = block.timestamp;
-            user.minimumTimeDue = block.timestamp + 259200;
+            user.minimumTimeDue = block.timestamp + 3 days;
             user.staked = true;
         }
         emit stakesEvent (msg.sender, _amount,  block.timestamp);
@@ -77,7 +77,7 @@ contract StakingAutoBalancingContract {
         totalWithdrawal = user.amount + interest;
         user.staked = false;
          _token.transfer(msg.sender, totalWithdrawal);
-        emit withdrawal  (msg.sender, totalWithdrawal);
+        emit withdrawal(msg.sender, totalWithdrawal);
         return true;
     }
 
@@ -90,7 +90,7 @@ contract StakingAutoBalancingContract {
         require(totalRemaining > _amount, "You do not have enough Balance to widthdraw that amount");
         user.amount = totalRemaining - _amount;
         user.timeStaked = block.timestamp;
-        user.minimumTimeDue = block.timestamp + 259200;
+        user.minimumTimeDue = block.timestamp + 30 days;
          _token.transfer(msg.sender, _amount);
         emit withdrawal(msg.sender, _amount);
         return true;
@@ -102,8 +102,8 @@ contract StakingAutoBalancingContract {
         uint interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue,block.timestamp);
         _token.transfer(msg.sender, interest );
         user.timeStaked = block.timestamp;
-        user.minimumTimeDue = block.timestamp + secPerMonth;
-        emit withdrawal  (msg.sender, interest );
+        user.minimumTimeDue = block.timestamp + 30 days;
+        emit withdrawal(msg.sender, interest );
         return true;
     }
 
@@ -112,5 +112,11 @@ contract StakingAutoBalancingContract {
         stakes memory user= records[msg.sender];
         emit viewStakes(msg.sender, user);
         return true;
+    }
+
+      function viewInterest() public view returns (uint interest) {
+        require (records[msg.sender].amount > 0, "You need to stake");
+        stakes memory user= records[msg.sender];
+        interest = interestCalc(user.amount,user.timeStaked, user.minimumTimeDue,block.timestamp);
     }
 }

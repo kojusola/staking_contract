@@ -5,16 +5,25 @@
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const { ethers } = require("hardhat");
-// const BoredApeNFTHolder = "0x4548d498460599286ce29baf9e6b775c19385227";
+const BoredApeNFTHolder = "0x4548d498460599286ce29baf9e6b775c19385227";
 const BoredApeTokenAddress = "0x4bf010f1b9beDA5450a8dD702ED602A104ff65EE";
+const stakingContractAddress = "0x4bf010f1b9beDA5450a8dD702ED602A104ff65EE";
 
 async function main() {
-  const stakingContract = await hre.ethers.getContractFactory(
-    "StakingAutoBalancingContract"
+  await hre.network.provider.request({
+    method: "hardhat_impersonateAccount",
+    params: [BoredApeNFTHolder],
+  });
+  const BoredAppSigner = await await ethers.provider.getSigner(
+    BoredApeNFTHolder
   );
-  const staking = await stakingContract.deploy(BoredApeTokenAddress);
-  await staking.deployed();
-  console.log("Contract Address", staking.address);
+  const stakingContract = await ethers.getContractAt(
+    "StakingAutoBalancingContract",
+    stakingContractAddress,
+    BoredAppSigner
+  );
+  const stakes = await stakingContract.Stake(ethers.utils.parseUnits("2", 18));
+  console.log("logs:", await stakes.wait());
 }
 
 // We recommend this pattern to be able to use async/await everywhere
