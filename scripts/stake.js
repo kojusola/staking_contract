@@ -6,7 +6,7 @@
 const hre = require("hardhat");
 const { ethers } = require("hardhat");
 // const BoredApeNFTHolder = "0x4548d498460599286ce29baf9e6b775c19385227";
-const BoredApeTokenAddress = "0x0ed64d01D0B4B655E410EF1441dD677B695639E7";
+const BoredApeTokenAddress = "0x4bf010f1b9beDA5450a8dD702ED602A104ff65EE";
 
 async function main() {
   const stakingContract = await hre.ethers.getContractFactory("StakeContract");
