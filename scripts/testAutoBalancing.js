@@ -1,12 +1,6 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
 const { ethers } = require("hardhat");
-// const BoredApeNFTHolder = "0x4548d498460599286ce29baf9e6b775c19385227";
-const BoredApeNFTHolder = "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266";
+const BoredApeNFTHolder = "0x4548d498460599286ce29baf9e6b775c19385227";
 const BoredApeTokenAddress = "0x4bf010f1b9beDA5450a8dD702ED602A104ff65EE";
 const stakingContractAddress = "0x96F3Ce39Ad2BfDCf92C0F6E2C2CAbF83874660Fc";
 
@@ -41,6 +35,12 @@ async function main() {
   );
   const event = await see.wait();
   console.log(event.events[0].args.value);
+
+  console.log(
+    `BoredApeToken balance After ${await BoredApeTokenContract.balanceOf(
+      BoredApeNFTHolder
+    )}`
+  );
 
   const stakingContract = await ethers.getContractAt(
     "StakingAutoBalancingContract",
