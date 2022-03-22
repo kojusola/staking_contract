@@ -64,6 +64,7 @@ contract StakingAutoBalancingContract {
             user.minimumTimeDue = block.timestamp + 3 days;
             user.staked = true;
         }
+        console.log(msg.sender);
         emit stakesEvent (msg.sender, _amount,  block.timestamp);
         return true;
     }
